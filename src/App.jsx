@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Input from "./components/Input";
+import Circle from "./components/Circle";
 // import useSound from "use-sound";
 // import sfx from "../public/sound/timerSound.mp3";
 
@@ -8,7 +9,7 @@ const btnStyle =
 
 function App() {
   const [time, setTime] = useState({
-    second: 1,
+    second: 60,
     minute: 0,
   });
   const [isRunning, setIsRunning] = useState(false);
@@ -52,14 +53,15 @@ function App() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen w-screen">
-      {isDisp && (
+    <div className="flex items-center justify-center h-screen w-screen bg-black">
+      {isDisp ? (
         <div>
+          <Circle time={time} />
           <p>{`${time.minute}：${time.second}`}</p>
-          <span>秒経過</span>
         </div>
+      ) : (
+        <Input time={time} setTime={setTime} />
       )}
-      {!isDisp && <Input time={time} setTime={setTime} />}
       <div>
         <button onClick={toggleCancel} className={btnStyle} disabled={!isDisp}>
           キャンセル
