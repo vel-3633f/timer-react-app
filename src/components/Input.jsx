@@ -1,4 +1,4 @@
-const Input = ({ time, setTime }) => {
+const Input = ({ time, setTime}) => {
   return (
     <div>
       <input

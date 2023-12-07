@@ -1,25 +1,29 @@
 import { useEffect, useState } from "react";
 import Input from "./components/Input";
 import Circle from "./components/Circle";
-// import useSound from "use-sound";
-// import sfx from "../public/sound/timerSound.mp3";
+import useSound from "use-sound";
+import sfx from "../public/sound/timerSound.mp3";
 
 const btnCancelStyle =
   "w-24 h-24 bg-gray-800 hover:bg-gray-700 text-white font-semibold hover:text-white hover:border-gray-700 py-2 border border-white rounded-full disabled:bg-gray-900 disabled:text-gray-700 disabled:border-gray-700";
 const btnStartStyle =
   "w-24 h-24  font-semibold hover:text-white  py-2 border rounded-full ";
-const greenStyle = "bg-green-900 text-green-100 border-green-400" 
-const yellowStyle = "bg-yellow-600"
+const greenStyle =
+  "bg-green-900 text-green-200 border-green-600 hover:text-green-200 hover:border-green-300";
+const yellowStyle =
+  "bg-yellow-900 text-yellow-400 border-yellow-600 hover:text-yellow-200 hover:border-yellow-300";
 
 function App() {
   const [time, setTime] = useState({
-    second: 60,
+    second: 0,
     minute: 0,
   });
   const [isRunning, setIsRunning] = useState(false);
   const [isDisp, setIsDisp] = useState(false);
-  // const [play] = useSound(sfx);
-
+  const [initialVal, setInitialVal] = useState(0);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [play] = useSound(sfx, { volume: 0.3 });
+  console.log(`${initialVal}des`);
   useEffect(() => {
     let timerId = null;
     if (isRunning) {
@@ -28,6 +32,9 @@ function App() {
           let sumTime = Number(obj.second) + 60 * Number(obj.minute);
           console.log(sumTime);
           if (sumTime - 1 === 0) {
+            play();
+            setIsRunning(false);
+            setIsDisp(false);
             clearInterval(timerId);
           }
           sumTime--;
@@ -45,9 +52,22 @@ function App() {
   }, [isRunning]);
 
   const toggleStart = () => {
-    setIsRunning((prev) => !prev);
-    if (!isDisp) {
-      setIsDisp((prev) => !prev);
+    try {
+      const sumTime = Number(time.second) + 60 * Number(time.minute);
+      if (sumTime === 0 || isNaN(sumTime)) {
+        throw Error;
+      }
+      if (time.minute === "") {
+        setTime({ ...time, minute: 0 });
+      }
+      setInitialVal(sumTime);
+      setIsRunning((prev) => !prev);
+      if (!isDisp) {
+        setIsDisp((prev) => !prev);
+      }
+      setErrorMsg("");
+    } catch {
+      setErrorMsg("有効な値を入れてください");
     }
   };
 
@@ -58,15 +78,22 @@ function App() {
 
   return (
     <div className="flex items-center justify-center h-screen w-screen bg-black flex-col">
-      {isDisp ? (
-        <div>
-          <Circle time={time} />
-          <p>{`${time.minute}：${time.second}`}</p>
-        </div>
-      ) : (
-        <Input time={time} setTime={setTime} />
-      )}
-      <div className="flex ">
+      <div className="h-[250px] flex items-center justify-center relative">
+        {isDisp ? (
+          <div>
+            <Circle time={time} initialVal={initialVal} />
+            <p className="text-white text-7xl absolute top-20 left-0 w-[300px] text-center">
+              {`${time.minute}：${time.second}`}
+            </p>
+          </div>
+        ) : (
+          <Input time={time} setTime={setTime} />
+        )}
+      </div>
+      <div className="h-10">
+        {!isDisp && <p className="text-red-200">{errorMsg}</p>}
+      </div>
+      <div className="flex justify-between w-[250px] sm:w-[350px] ">
         <button
           onClick={toggleCancel}
           className={btnCancelStyle}
@@ -76,7 +103,11 @@ function App() {
         </button>
         <button
           onClick={toggleStart}
-          className={isRunning ? `${btnStartStyle} ${yellowStyle}` : `${btnStartStyle} ${greenStyle}`}
+          className={
+            isRunning
+              ? `${btnStartStyle} ${yellowStyle}`
+              : `${btnStartStyle} ${greenStyle}`
+          }
         >
           {isRunning ? "一時停止" : "開始"}
         </button>
