@@ -4,8 +4,12 @@ import Circle from "./components/Circle";
 // import useSound from "use-sound";
 // import sfx from "../public/sound/timerSound.mp3";
 
-const btnStyle =
-  "bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded disabled:bg-blue-500 disabled:text-white";
+const btnCancelStyle =
+  "w-24 h-24 bg-gray-800 hover:bg-gray-700 text-white font-semibold hover:text-white hover:border-gray-700 py-2 border border-white rounded-full disabled:bg-gray-900 disabled:text-gray-700 disabled:border-gray-700";
+const btnStartStyle =
+  "w-24 h-24  font-semibold hover:text-white  py-2 border rounded-full ";
+const greenStyle = "bg-green-900 text-green-100 border-green-400" 
+const yellowStyle = "bg-yellow-600"
 
 function App() {
   const [time, setTime] = useState({
@@ -53,7 +57,7 @@ function App() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen w-screen bg-black">
+    <div className="flex items-center justify-center h-screen w-screen bg-black flex-col">
       {isDisp ? (
         <div>
           <Circle time={time} />
@@ -62,11 +66,18 @@ function App() {
       ) : (
         <Input time={time} setTime={setTime} />
       )}
-      <div>
-        <button onClick={toggleCancel} className={btnStyle} disabled={!isDisp}>
+      <div className="flex ">
+        <button
+          onClick={toggleCancel}
+          className={btnCancelStyle}
+          disabled={!isDisp}
+        >
           キャンセル
         </button>
-        <button onClick={toggleStart} className={btnStyle}>
+        <button
+          onClick={toggleStart}
+          className={isRunning ? `${btnStartStyle} ${yellowStyle}` : `${btnStartStyle} ${greenStyle}`}
+        >
           {isRunning ? "一時停止" : "開始"}
         </button>
       </div>
