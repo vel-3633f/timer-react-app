@@ -52,11 +52,9 @@ function App() {
     };
   }, [isRunning]);
 
-  console.log(initialVal);
   useEffect(() => {
     let sumTime = Number(time.second) + 60 * Number(time.minute);
     const timePercent = Math.floor((sumTime / initialVal) * 100);
-    console.log(timePercent);
     setGauge(timePercent);
   }, [time]);
 
@@ -82,6 +80,10 @@ function App() {
   };
 
   const toggleCancel = () => {
+    setTime({
+      second: 0,
+      minute: 0,
+    });
     setGauge(100);
     setIsRunning(false);
     setIsDisp((prev) => !prev);

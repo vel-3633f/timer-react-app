@@ -38,6 +38,13 @@ const Circle = ({ gauge }) => {
     return circumference * ((100 - value) / 100);
   }, [circumference, value]);
 
+  const transitionStyle = useMemo(() => {
+    return {
+      strokeDashoffset: dashoffset,
+      transition: "stroke-dashoffset 1000ms linear",
+    };
+  }, [dashoffset]);
+
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       <circle
@@ -48,7 +55,7 @@ const Circle = ({ gauge }) => {
         fill="transparent"
         strokeWidth={strokeWidth}
         strokeDasharray={circumference}
-        strokeDashoffset={dashoffset}
+        style={transitionStyle}
         transform={`rotate(-90 ${outerR} ${outerR})`}
       />
     </svg>
