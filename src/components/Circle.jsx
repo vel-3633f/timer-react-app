@@ -1,14 +1,11 @@
 import { useMemo } from "react";
 
-const Circle = ({ time, initialVal }) => {
-  const sumTime = Number(time.second) + 60 * Number(time.minute);
-  const timePercent = Math.floor((sumTime / initialVal) * 100);
-
+const Circle = ({ gauge }) => {
   const props = {
     color: "#FBBF24",
     r: 150,
     strokeWidth: 6,
-    value: timePercent,
+    value: gauge,
   };
 
   const { color, r: outerR, strokeWidth, value } = props;

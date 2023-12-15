@@ -21,16 +21,17 @@ function App() {
   const [isRunning, setIsRunning] = useState(false);
   const [isDisp, setIsDisp] = useState(false);
   const [initialVal, setInitialVal] = useState(0);
+  const [gauge, setGauge] = useState(100);
   const [errorMsg, setErrorMsg] = useState("");
   const [play] = useSound(sfx, { volume: 0.3 });
-  console.log(`${initialVal}des`);
+
   useEffect(() => {
     let timerId = null;
     if (isRunning) {
       timerId = setInterval(() => {
         setTime((obj) => {
           let sumTime = Number(obj.second) + 60 * Number(obj.minute);
-          console.log(sumTime);
+
           if (sumTime - 1 === 0) {
             play();
             setIsRunning(false);
@@ -51,6 +52,14 @@ function App() {
     };
   }, [isRunning]);
 
+  console.log(initialVal);
+  useEffect(() => {
+    let sumTime = Number(time.second) + 60 * Number(time.minute);
+    const timePercent = Math.floor((sumTime / initialVal) * 100);
+    console.log(timePercent);
+    setGauge(timePercent);
+  }, [time]);
+
   const toggleStart = () => {
     try {
       const sumTime = Number(time.second) + 60 * Number(time.minute);
@@ -60,9 +69,10 @@ function App() {
       if (time.minute === "") {
         setTime({ ...time, minute: 0 });
       }
-      setInitialVal(sumTime);
       setIsRunning((prev) => !prev);
       if (!isDisp) {
+        setInitialVal(sumTime);
+
         setIsDisp((prev) => !prev);
       }
       setErrorMsg("");
@@ -72,6 +82,7 @@ function App() {
   };
 
   const toggleCancel = () => {
+    setGauge(100);
     setIsRunning(false);
     setIsDisp((prev) => !prev);
   };
@@ -81,7 +92,12 @@ function App() {
       <div className="h-[250px] flex items-center justify-center relative">
         {isDisp ? (
           <div>
-            <Circle time={time} initialVal={initialVal} />
+            <Circle
+              time={time}
+              initialVal={initialVal}
+              gauge={gauge}
+              setGauge={setGauge}
+            />
             <p className="text-white text-7xl absolute top-20 left-0 w-[300px] text-center">
               {`${time.minute}：${time.second}`}
             </p>
