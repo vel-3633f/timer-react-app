@@ -55,7 +55,9 @@ function App() {
   useEffect(() => {
     let sumTime = Number(time.second) + 60 * Number(time.minute);
     const timePercent = (sumTime / initialVal) * 100;
-    setGauge(timePercent.toFixed(5));
+    if (isDisp) {
+      setGauge(timePercent.toFixed(5));
+    }
   }, [time]);
 
   const toggleStart = () => {
@@ -84,9 +86,9 @@ function App() {
       second: 0,
       minute: 0,
     });
-    setGauge(100);
     setIsRunning(false);
     setIsDisp((prev) => !prev);
+    setGauge(100);
   };
 
   return (
