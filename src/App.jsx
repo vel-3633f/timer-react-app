@@ -99,7 +99,7 @@ function App() {
     <div className="flex items-center justify-center h-screen w-screen bg-black flex-col">
       <div className="h-[250px] flex items-center justify-center relative">
         {isDisp ? (
-          <Counter time={time} gauge={gauge} />
+          <Counter time={time} gauge={gauge} isDisp={isDisp} />
         ) : (
           <Input time={time} setTime={setTime} />
         )}

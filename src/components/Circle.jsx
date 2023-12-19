@@ -1,57 +1,46 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useEffect, useState } from "react";
 
-const Circle = ({ gauge }) => {
-  const props = {
-    color: "#FBBF24",
-    r: 150,
-    strokeWidth: 6,
-    value: gauge,
-  };
+const Circle = ({ gauge, isDisp }) => {
+  const outerR = 150;
+  const strokeWidth = 6;
+  const color = "#FBBF24";
 
-  const { color, r: outerR, strokeWidth, value } = props;
+  // SVGのwidthとheightとなるサイズ
+  const size = useMemo(() => outerR * 2, []);
 
-  const [initialDashOffset, setInitialDashOffset] = useState(0);
+  // strokeWidthを考慮した半径
+  const r = useMemo(() => outerR - strokeWidth / 2, []);
 
-  /**
-   * SVGのwidthとheightとなるサイズ
-   */
-  const size = useMemo(() => {
-    return outerR * 2;
-  }, [outerR]);
+  // 円周
+  const circumference = useMemo(() => 2 * Math.PI * r, []);
 
-  /**
-   * strokeWidthを考慮した半径
-   */
-  const r = useMemo(() => {
-    return outerR - strokeWidth / 2;
-  }, [outerR, strokeWidth]);
+  // 表示する円周の長さ
+  const dashoffset = useMemo(
+    () => circumference * ((100 - gauge) / 100),
+    [gauge]
+  );
 
-  /**
-   * 円周
-   */
-  const circumference = useMemo(() => {
-    return 2 * Math.PI * r;
-  }, [r]);
+  const [initialDashOffset, setInitialDashOffset] = useState(circumference);
 
   useEffect(() => {
     // ゲージが変更されたときに初期のstrokeDashoffsetを設定
-    const newDashOffset = circumference * ((100 - value) / 100);
-    setInitialDashOffset(newDashOffset);
-  }, [circumference, value]);
+    setInitialDashOffset(circumference);
+  }, [circumference]);
 
-  /**
-   * 表示する円周の長さ
-   */
-  const dashoffset = useMemo(() => {
-    return circumference * ((100 - value) / 100);
-  }, [circumference, value]);
+  useEffect(() => {
+    // isDisp が変更されたらアニメーションなしで直接目標の値に設定
+    if (!isDisp) {
+      setInitialDashOffset(circumference);
+    }
+  }, [isDisp, circumference]);
 
   const transitionStyle = useMemo(() => {
     return {
-      strokeDashoffset: dashoffset,
-      transition: "stroke-dashoffset 1000ms linear",
+      strokeDashoffset: isDisp ? dashoffset : initialDashOffset,
+      transition: isDisp ? "stroke-dashoffset 1000ms linear" : "none",
+      strokeLinecap: "round",
     };
-  }, [dashoffset]);
+  }, [dashoffset, initialDashOffset, isDisp]);
 
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
@@ -63,7 +52,7 @@ const Circle = ({ gauge }) => {
         fill="transparent"
         strokeWidth={strokeWidth}
         strokeDasharray={circumference}
-        style={{ ...transitionStyle, strokeDashoffset: initialDashOffset }}
+        style={{ ...transitionStyle }}
         transform={`rotate(-90 ${outerR} ${outerR})`}
       />
     </svg>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Circle from "./Circle";
 
-const Counter = ({ time, gauge }) => {
+const Counter = ({ time, gauge,isDisp }) => {
   const [newTime, setNewTime] = useState({
     second: "",
     minute: "",
@@ -20,7 +20,7 @@ const Counter = ({ time, gauge }) => {
 
   return (
     <div>
-      <Circle gauge={gauge} />
+      <Circle gauge={gauge} isDisp={isDisp} />
       <p className="text-white text-7xl absolute top-20 left-0 w-[300px] text-center">
         {`${newTime.minute}：${newTime.second}`}
       </p>
