@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import Input from "./components/Input";
-import Circle from "./components/Circle";
 import useSound from "use-sound";
 import sfx from "../public/sound/timerSound.mp3";
+import Counter from "./components/Counter";
 
 const btnCancelStyle =
   "w-24 h-24 bg-gray-800 hover:bg-gray-700 text-white font-semibold hover:text-white hover:border-gray-700 py-2 border border-white rounded-full disabled:bg-gray-900 disabled:text-gray-700 disabled:border-gray-700";
@@ -32,11 +32,15 @@ function App() {
         setTime((obj) => {
           let sumTime = Number(obj.second) + 60 * Number(obj.minute);
 
-          if (sumTime - 1 === 0) {
+          if (sumTime === 0) {
             play();
             setIsRunning(false);
             setIsDisp(false);
             clearInterval(timerId);
+            return {
+              second: 0,
+              minute: 0,
+            };
           }
           sumTime--;
           let newObj = {
@@ -95,17 +99,7 @@ function App() {
     <div className="flex items-center justify-center h-screen w-screen bg-black flex-col">
       <div className="h-[250px] flex items-center justify-center relative">
         {isDisp ? (
-          <div>
-            <Circle
-              time={time}
-              initialVal={initialVal}
-              gauge={gauge}
-              setGauge={setGauge}
-            />
-            <p className="text-white text-7xl absolute top-20 left-0 w-[300px] text-center">
-              {`${time.minute}：${time.second}`}
-            </p>
-          </div>
+          <Counter time={time} gauge={gauge} />
         ) : (
           <Input time={time} setTime={setTime} />
         )}

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 const Circle = ({ gauge }) => {
   const props = {
@@ -9,6 +9,8 @@ const Circle = ({ gauge }) => {
   };
 
   const { color, r: outerR, strokeWidth, value } = props;
+
+  const [initialDashOffset, setInitialDashOffset] = useState(0);
 
   /**
    * SVGのwidthとheightとなるサイズ
@@ -30,6 +32,12 @@ const Circle = ({ gauge }) => {
   const circumference = useMemo(() => {
     return 2 * Math.PI * r;
   }, [r]);
+
+  useEffect(() => {
+    // ゲージが変更されたときに初期のstrokeDashoffsetを設定
+    const newDashOffset = circumference * ((100 - value) / 100);
+    setInitialDashOffset(newDashOffset);
+  }, [circumference, value]);
 
   /**
    * 表示する円周の長さ
@@ -55,7 +63,7 @@ const Circle = ({ gauge }) => {
         fill="transparent"
         strokeWidth={strokeWidth}
         strokeDasharray={circumference}
-        style={transitionStyle}
+        style={{ ...transitionStyle, strokeDashoffset: initialDashOffset }}
         transform={`rotate(-90 ${outerR} ${outerR})`}
       />
     </svg>
