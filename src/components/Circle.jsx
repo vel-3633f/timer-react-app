@@ -1,46 +1,37 @@
-import { useMemo, useEffect, useState } from "react";
+import { useMemo } from "react";
 
-const Circle = ({ gauge, isDisp }) => {
+const Circle = ({ gauge}) => {
   const outerR = 150;
   const strokeWidth = 6;
   const color = "#FBBF24";
+  /**
+   * SVGのwidthとheightとなるサイズ
+   */
+  const size = useMemo(() => {
+    return outerR * 2;
+  }, []);
 
-  // SVGのwidthとheightとなるサイズ
-  const size = useMemo(() => outerR * 2, []);
+  /**
+   * strokeWidthを考慮した半径
+   */
+  const r = useMemo(() => {
+    return outerR - strokeWidth / 2;
+  }, []);
 
-  // strokeWidthを考慮した半径
-  const r = useMemo(() => outerR - strokeWidth / 2, []);
-
-  // 円周
-  const circumference = useMemo(() => 2 * Math.PI * r, []);
-
-  // 表示する円周の長さ
-  const dashoffset = useMemo(
-    () => circumference * ((100 - gauge) / 100),
-    [gauge]
-  );
-
-  const [initialDashOffset, setInitialDashOffset] = useState(circumference);
-
-  useEffect(() => {
-    // ゲージが変更されたときに初期のstrokeDashoffsetを設定
-    setInitialDashOffset(circumference);
-  }, [circumference]);
-
-  useEffect(() => {
-    // isDisp が変更されたらアニメーションなしで直接目標の値に設定
-    if (!isDisp) {
-      setInitialDashOffset(circumference);
-    }
-  }, [isDisp, circumference]);
+  /**
+   * 円周
+   */
+  const circumference = useMemo(() => {
+    return 2 * Math.PI * r;
+  }, []);
 
   const transitionStyle = useMemo(() => {
     return {
-      strokeDashoffset: isDisp ? dashoffset : initialDashOffset,
-      transition: isDisp ? "stroke-dashoffset 1000ms linear" : "none",
+      strokeDashoffset: circumference * ((100 - gauge) / 100),
+      transition: "stroke-dashoffset 1000ms linear",
       strokeLinecap: "round",
     };
-  }, [dashoffset, initialDashOffset, isDisp]);
+  }, [gauge]);
 
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
