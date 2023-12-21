@@ -82,9 +82,15 @@ function App() {
           <Input time={time} setTime={setTime} />
         )}
       </div>
-      <div className="h-10">{!isDisp && <p className="text-red-200">{errorMsg}</p>}</div>
+      <div className="h-10">
+        {!isDisp && <p className="text-red-200">{errorMsg}</p>}
+      </div>
       <div className="flex justify-between w-[250px] sm:w-[350px] ">
-        <button onClick={toggleCancel} className={btnCancelStyle} disabled={!isDisp}>
+        <button
+          onClick={toggleCancel}
+          className={btnCancelStyle}
+          disabled={!isDisp}
+        >
           キャンセル
         </button>
         <button
